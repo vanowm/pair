@@ -1,0 +1,486 @@
+*
+{
+  --size: 16px;
+  font-size: var(--size);
+  line-height: var(--size);
+}
+html, body
+{
+  display: flex;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  font-family: Helvetica;
+  box-sizing: border-box;
+}
+
+body
+{
+  flex-direction: column;
+  grid-gap: 1em;
+  margin: auto;
+  user-select: none;
+}
+
+body > *
+{
+  margin: auto;
+}
+body > .content
+{
+  display: grid;
+  flex-grow: 1;
+  align-content: start;
+  user-select: none;
+}
+.control
+{
+  margin: 1em auto;
+  display: flex;
+  align-items: center;
+  grid-gap: 0.2em
+}
+#numInput
+{
+  width: 3em;
+}
+.control > *
+{
+  vertical-align: middle;
+}
+.table
+{
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+  line-height: 1em;
+  justify-content: center;
+  align-content: start;
+  min-width: 25em;
+  resize: both;
+  overflow: auto;
+  min-height: 9em;
+  border: 1px solid rgba(127,127,127, 0.2);
+  padding: 0.3em;
+}
+body.playback.started .table
+{
+  background-color: rgba(127,127,127, 0.1);
+}
+.result
+{
+  border: 1px solid black;
+  font-size: 0.9em;
+  display: inline-block;
+  overflow: auto;
+  text-align: center;
+  cursor: default;
+  border-collapse: collapse;
+  touch-action: manipulation;
+  max-height: 27em;
+}
+
+.result caption
+{
+  padding: 0.3em 0;
+}
+
+.result[num="0"] .filter
+{
+  display: none;
+}
+.result select
+{
+}
+
+.perfect
+{
+  text-shadow: 0 0 2px lightgreen;
+}
+
+.result > tbody > tr:hover
+{
+  background-color: silver;
+}
+
+.result.odd > tbody > tr:nth-child(odd):not(:hover),
+.result:not(.odd) > tbody > tr:nth-child(even):not(:hover)
+{
+  background-color: rgba(127, 127, 127, 0.2);
+}
+
+.result th[sort]:after
+{
+  content: "▲";
+  font-size: 0.7em;
+  vertical-align: top;
+}
+
+.result th[sort="0"]:after
+{
+  content: "▼";
+}
+
+.result th
+{
+  padding: 0.2em 0.2em;
+}
+.result:not([num="0"]) th:nth-child(2)
+{
+  min-width: 7em;
+}
+
+.result ths:nth-child(2)
+{
+  min-width: 5em;
+}
+
+.result td
+{
+  padding: 0.3em 0.5em;
+}
+.result > thead
+
+{
+  position: sticky;
+  top: -1px;
+  background-color: white;
+}
+
+.result:not([num="0"]) > thead:after
+{
+  content: "";
+  position: absolute;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+  width: 100%;
+  left: 0;
+}
+.result > thead:after
+{
+  bottom: -1px;
+}
+
+.result > thead
+{
+  cursor: pointer;
+}
+body.replay #result > tr.replay,
+body:not(.replay) #result > tr.last
+{
+  font-weight: bold;
+  text-shadow: 0 0 1px black;
+}
+
+body.replay  #result > tr.perfect.replay,
+body:not(.replay) #result > tr.perfect.last
+{
+  text-shadow: 0 0 2px green;
+}
+
+body.replay  #result > tr.replay
+{
+  background-color: pink;
+}
+
+
+#status,
+#result,
+.table > div
+{
+  padding: 0;
+  margin: 0.05em;
+  font-family: monospace;
+  line-height: 1em;
+}
+.table > div
+{
+  font-size: 8em;
+}
+.table > div:not(.open)
+{
+  text-shadow: 0 0 10px black;
+}
+body.solved .table > div,
+.table > div:not(.open)
+{
+  color: initial;
+}
+.table > div.mark
+{
+  box-shadow: 0 0 10px 1px #51a1a1;
+  text-shadow: 0 0 5px #51a1a1;
+}
+body.player:not(.started) .table > div:not(.open):hover,
+body:not(.player) .table > div:not(.open):hover
+{
+  cursor: pointer;
+  text-shadow: 0 0 10px #51a1a1;
+}
+.table > div.bad
+{
+  box-shadow: 0 0 10px 1px #d18181;
+  text-shadow: 0 0 1px #d18181;
+}
+.table > div.red.open
+{
+  color: darkred;
+}
+
+body.solved  .table > div
+{
+  animation: flashSolved 1s;
+}
+
+@keyframes flashSolved {
+  25%,75% {
+    box-shadow: 0 0 10px 1px #71F171;
+    text-shadow: 0 0 1px #71F171;
+  }
+}
+
+body.solved.replay #result > tr.replay,
+body.solved:not(.replay) #result > tr.last
+{
+  animation: flashResult 0.4s 7;
+}
+@keyframes flashResult {
+  50% {opacity: 0.5}
+}
+.table > div.good
+{
+  animation: flashGood 0.1s 6;
+}
+@keyframes flashGood {
+  0% {
+    box-shadow: 0 0 10px 1px #71F171;
+    text-shadow: 0 0 1px #71F171;
+  }
+  50% {opacity: 0.0}
+  100% {
+    box-shadow: 0 0 10px 1px #71F171;
+    text-shadow: 0 0 1px #71F171;
+  }
+}
+
+
+body > footer
+{
+  padding-bottom: 2em;
+}
+#status
+{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  width: 100%;
+  text-align: center;
+  padding: 0.3em;
+  line-height: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#status > * > *
+{
+  padding: 0 0 0.3em 0.3em;
+  font-weight: bold;
+}
+#status > *:not(:last-child):after
+{
+  content: "";
+  margin: 0 0.7em;
+  border-right:1px solid black;
+}
+
+/*
+body.started.solved #status,
+body:not(.started):not(.solved) #status,
+
+body:not(.player) #player,
+body:not(.play) .play,
+body:not(.stop) .stop,
+*/
+body.playback.started:not(.solved) .startTime
+{
+  display: none;
+}
+
+#player
+{
+  text-align: center;
+}
+#player > *
+{
+  width: 1em;
+  height: 1em;
+  padding: 0.2em;
+  margin: 0 0.2em;
+  cursor: pointer;
+  vertical-align: middle;
+}
+#player .play:before,
+#player .stop:before
+{
+  content: "";
+  border-style: solid;
+  border-width: 0.4em;
+  border-color: #202020;
+  display: inline-block;
+  padding: 0;
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  vertical-align: text-top;
+  transition: 100ms all ease;
+}
+#player .stop:before
+{
+  border-width: 0.5em;
+}
+
+#player .play:before {
+  background: transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-width: 0.5em 0 0.5em 1em;
+}
+body.pause #player .play:before {
+  border-style: double;
+  border-width: 0 0 0 1em;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+body:not(.play) #player .play,
+body:not(.stop) #player .stop,
+body.noplay #player .play
+{
+  cursor: default;
+}
+body:not(.stop) #player .stop:before,
+body:not(.play) #player .play:before,
+body.noplay #player .play:before
+{
+  opacity: 0.3;
+}
+/*
+#player > .stop:hover:before {
+  border-color: #404040;
+}
+
+#player > :not(.stop):hover:before {
+  border-left-color:#404040;
+}
+*/
+
+label.menu:hover,
+.audio:hover,
+body.play:not(.noplay) #player .play:hover,
+body.stop #player .stop:hover
+{
+  background-color: rgba(128,128,128,0.2);
+}
+
+#menu
+{
+  display: none;
+}
+span.menu
+{
+  position: relative;
+}
+label.menu
+{
+  width: 1em;
+  height: 1em;
+  padding: 0.2em;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+}
+label.menu:after
+{
+  content: "";
+  width: 0.9em;
+  height: 1em;
+  background-image: radial-gradient(circle, #202020 0.1em, transparent 0.11em);
+  background-size: 100% 33.33%;
+  display: inline-block;
+}
+
+span.menu .content *
+{
+  cursor: default;
+}
+
+/*
+body.play.noplay .menu:hover .content,
+body:not(.play) .menu:hover .content,
+*/
+#menu:checked ~ .overlay
+{
+  display: block;
+  position: fixed;
+  background-color: transparent;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1
+}
+#menu:not(:checked) + .content
+{
+  opacity: 0;
+  height: 0;
+  width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.menu > .content *
+{
+  vertical-align: middle;
+}
+
+.menu > .content > span
+{
+  display: inline-block;
+}
+.menu > .content .disp
+{
+  margin-left: 0.5em;
+}
+.menu > .content
+{
+  background-color: rgba(228,228,228,0.9);
+  position: absolute;
+  top: 1.5em;
+  right: -1em;
+  overflow: hidden;
+  transition: all 0.3s;
+  padding: 0.4em;
+  border: 1px solid rgba(128,128,128,0.9);
+  white-space: nowrap;
+  z-index: 2;
+}
+#audio
+{
+  display: none;
+}
+#audio + span:before
+{
+  content: "🔇";
+}
+#audio:checked + span:before
+{
+  content: "🔊";
+}
+
+.hidden
+{
+  display: none;
+}
