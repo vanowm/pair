@@ -72,7 +72,7 @@ for(let i = 1, min = el.clientWidth; i < cardsBack.length; i++)
 elTable.removeChild(el);
 
 
-elAudio.checked = ~~(localStorage.getItem("a")||1);
+elAudio.checked = ~~(localStorage.getItem("pairAudio")||1);
 
 playSound.list = {};
 document.querySelectorAll("audio").forEach(e => 
@@ -81,7 +81,7 @@ document.querySelectorAll("audio").forEach(e =>
 });
 const SID = (e =>
 {
-  let r = localStorage.getItem("sid")||"";
+  let r = localStorage.getItem("pairSid")||"";
   if (!r.match(/[a-zA-Z0-9]{32}/))
     r = _SID;
 
@@ -96,13 +96,13 @@ const SID = (e =>
   return r;
 })();
 
-localStorage.setItem("sid", SID);
+localStorage.setItem("pairSid", SID);
 
 //if (readCookie("sid") != SID)
   createCookie("sid", SID);
 
-let cardBack, count, sequence, deck, opened, playback, ID = ~~localStorage.getItem("id") || 1,
-    num = ~~localStorage.getItem("n") || 5;
+let cardBack, count, sequence, deck, opened, playback, ID = ~~localStorage.getItem("pairId") || 1,
+    num = ~~localStorage.getItem("pairNum") || 5;
 
 if (num < 2)
   num = 2;
@@ -114,7 +114,7 @@ elCardsPairInput.value = elCardsPairSlider.value = num;
 const STATS = (()=>
 {
   let v;
-  try{v=localStorage.getItem("r")}catch(e){}
+  try{v=localStorage.getItem("pairRecords")}catch(e){}
   const arr = [...new Set(JSON.parse(v || "[]").concat(STATSDATA).map(e => JSON.stringify(e)))].map(e=>JSON.parse(e)).sort((a,b)=>a[0]-b[0]);
 /*
   let max = 0, dup = [];
@@ -149,12 +149,12 @@ if (STATS.length)
   if (i > ID)
   {
     ID = i + 1;
-    localStorage.setItem("id", ID);
+    localStorage.setItem("pairId", ID);
   }
 }
-let sort = ~~localStorage.getItem("s") || 1,
-    order = ~~localStorage.getItem("o"),
-    filter = ~~localStorage.getItem("f");
+let sort = ~~localStorage.getItem("pairSort") || 1,
+    order = ~~localStorage.getItem("pairOrder"),
+    filter = ~~localStorage.getItem("pairFilter");
 
 function init(data, play)
 {
@@ -177,7 +177,7 @@ function init(data, play)
       num = 1000;
 
     elCardsPairSlider.value = elCardsPairInput.value = num;
-    localStorage.setItem("n", num)
+    localStorage.setItem("pairNum", num)
     data = undefined;
   }
   if (data)
@@ -429,8 +429,8 @@ elTable.addEventListener("click", e =>
         data[STATS_DUP] = STATS[STATS.indexOf(playback)][STATS_ID];
 
       STATS.push(data);
-      try{localStorage.setItem("r", JSON.stringify(STATS));}catch(e){};
-      localStorage.setItem("id", ID);
+      try{localStorage.setItem("pairRecords", JSON.stringify(STATS));}catch(e){};
+      localStorage.setItem("pairId", ID);
       statsShow(-1);
       document.body.classList.remove("replay");
     }
@@ -494,7 +494,7 @@ elPlayer.addEventListener("click", e =>
 elFilter.addEventListener("input", e =>
 {
   filter = ~~e.target.value;
-  localStorage.setItem("f", filter);
+  localStorage.setItem("pairFilter", filter);
   statsShow(playback || -1);
 });
 
@@ -511,8 +511,8 @@ elSort.addEventListener("click", e =>
   else
     sort = s;
 
-  localStorage.setItem("s", sort);
-  localStorage.setItem("o", order);
+  localStorage.setItem("pairSort", sort);
+  localStorage.setItem("pairOrder", order);
 //  statsShow(document.body.classList.contains("solved") ? -1 : undefined);
   statsShow(playback || -1);
 });
@@ -526,7 +526,7 @@ elResult.addEventListener("dblclick", e =>
 
 elAudio.addEventListener("input", e =>
 {
-  localStorage.setItem("a", ~~e.target.checked);
+  localStorage.setItem("pairAudio", ~~e.target.checked);
 });
 
 const player = new class player
@@ -538,8 +538,8 @@ const player = new class player
 
     this.elSpeed.min = 0;
     this.elSpeed.max = 5;
-    let speed = localStorage.getItem("p");
-    if (speed < this.elSpeed.min || speed > this.elSpeed.max)
+    let speed = localStorage.getItem("pairPlay");
+    if (speed === null || speed < this.elSpeed.min || speed > this.elSpeed.max)
       speed = 1;
 
     this.speed = ~~speed;
@@ -551,7 +551,7 @@ const player = new class player
     {
       that.speed = ~~e.target.value;
       that.speedTitle();
-      localStorage.setItem("p", that.speed);
+      localStorage.setItem("pairPlay", that.speed);
     });
 
     this.init(data);
